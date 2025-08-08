@@ -1,0 +1,14 @@
+#!/bin/bash
+
+name=$(jq -r '.name' data.json)
+height=$(jq -r '.height' data.json)
+weight=$(jq -r '.weight' data.json)
+type=$(jq -r '.types[0].type.name' data.json)
+
+metres_height=$(awk "BEGIN {printf \"%.1f\", $height/10}")
+kg_weight=$(awk "BEGIN {printf \"%.1f\", $weight/10}")
+
+name_cap=$(echo "$name" | sed 's/.*/\u&/')
+type_cap=$(echo "$type" | sed 's/.*/\u&/')
+
+echo "$name_cap is of type $type_cap, weighs ${kg_weight}kg, and is ${metres_height}m tall."

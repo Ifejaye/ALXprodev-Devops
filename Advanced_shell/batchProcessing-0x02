@@ -1,0 +1,36 @@
+#!/bin/bash
+
+pokemon_list=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
+
+mkdir -p pokemon_data
+
+fetch_pokemon() {
+    local pokemon_name="$1"
+    local output_file="pokemon_data/${pokemon_name}.json"
+    local max_retries=3
+    local attempts=1
+
+    while (( attempts <= max_retries )); do
+        echo "Fetching data for $pokemon_name (Attempt: $attempts)..."
+        if curl -s -f "https://pokeapi.co/api/v2/pokemon/$pokemon_name" -o "$output_file"; then
+            echo "Successfully fetched ${pokemon_name}"
+            return 0
+        else
+            echo "Failed to fetch ${pokemon_name}, retrying..."
+            (( attempts++ ))
+            sleep 2
+        fi
+    done
+
+    echo "Could not fetch data for ${pokemon_name} after $max_retries attempts." >&2
+    return 1
+}
+
+for pokemon in "${pokemon_list[@]}"; do
+    if fetch_pokemon "$pokemon"; then
+        echo "Data saved for $pokemon"
+    else
+        echo "Skipping $pokemon due to repeated failures."
+    fi
+    sleep 2
+done

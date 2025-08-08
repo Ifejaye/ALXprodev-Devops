@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pokemon_list=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
+
+mkdir -p pokemon_data
+
+fetch_pokemon() {
+    local pokemon_name="$1"
+    local output_file="pokemon_data/${pokemon_name}.json"
+
+    echo "Fetching data for $pokemon_name..."
+    if curl -s -f "https://pokeapi.co/api/v2/pokemon/$pokemon_name" -o "$output_file"; then
+        echo "Successfully fetched $pokemon_name"
+    else
+        echo "Failed to fetch $pokemon_name" >&2
+    fi
+}
+
+for pokemon in "${pokemon_list[@]}"; do
+    fetch_pokemon "$pokemon" & 
+done
+
+wait
+
+echo "All Pokémon data fetched!"

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ -z "$1" ];then
+    echo "No pokemon specified"
+    URL="https://pokeapi.co/api/v2/pokemon"
+else
+    POKEMON_NAME=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    URL="https://pokeapi.co/api/v2/pokemon/$POKEMON_NAME"
+fi
+
+OUTPUT_FILE="data.json"
+ERROR_FILE="error.txt"
+
+curl -s -f "$URL" -o "$OUTPUT_FILE"
+
+if [ $? -ne 0 ];then
+    echo "Failed to fetch Pikachu data from API: $URL" >> "$ERROR_FILE"
+    date >> "$ERROR_FILE"
+    echo "----------------------------" >> "$ERROR_FILE"
+fi
